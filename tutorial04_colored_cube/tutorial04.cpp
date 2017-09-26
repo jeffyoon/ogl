@@ -1,6 +1,7 @@
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 // Include GLEW
 #include <GL/glew.h>
@@ -15,6 +16,51 @@ GLFWwindow* window;
 using namespace glm;
 
 #include <common/shader.hpp>
+
+#define VIEW_ANGLE      90
+#define START_ANGLE     0
+#define PIECE_COUNT     1024
+#define ELEMENT_COUNT   5
+
+int setCylinderModel(float height, float radius, int piece_count, float viewangle, float **vertices)
+{
+    int vertexCount;
+    
+    if (vertices != NULL)
+    {
+        *vertices = (float*)malloc(sizeof(float) * ((piece_count + 1) * 2 * ELEMENT_COUNT));
+    }
+    
+    float theta = (float) (2 * M_PI * viewangle / 360 / piece_count);
+    float piece_width = 1.0 / piece_count;
+    for (int i = 0; i <= piece_count; i++) {
+        float x = radius * cos(theta * i);
+        float y = height / 2.0f;
+        float z = radius * sin(theta * i);
+        (*vertices)[i * 2 * ELEMENT_COUNT] = x;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 1] = y;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 2] = z;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 3] = piece_width * i;       //s
+        (*vertices)[i * 2 * ELEMENT_COUNT + 4] = 0.0;       //t
+        
+        y = -height / 2.0f;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 5] = x;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 6] = y;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 7] = z;
+        (*vertices)[i * 2 * ELEMENT_COUNT + 8] = piece_width * i;       //s
+        (*vertices)[i * 2 * ELEMENT_COUNT + 9] = 1.0;       //t
+    }
+    
+    vertexCount = (piece_count + 1) * 2;
+    int totalCnt = vertexCount * ELEMENT_COUNT;
+    for (int i = 0; i < totalCnt; i++)
+    {
+        printf("cylinederVetrices[%d] = [%f]\n", i, (*vertices)[i]);
+    }
+    
+    return vertexCount;
+}
+
 
 int main( void )
 {
@@ -72,13 +118,27 @@ int main( void )
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
+    int texture_width = 1024;
+    int texture_height = 768;
+    
+    float l = texture_width * 360 / VIEW_ANGLE;
+    float r = l / 2 / M_PI;
+    float h = texture_height;
+
+    float eye_y = -0.52;
+    float target_y = -0.25;
+    
+    glm::vec3 m_eye = glm::vec3(0.0001, eye_y, 0.0);
+    glm::vec3 m_target = glm::vec3(r/h*cos((float)VIEW_ANGLE/180*M_PI/2), target_y, r/h*cos((float)VIEW_ANGLE/180*M_PI/2));
+    glm::vec3 up = glm::vec3(0, 1, 0);
+    
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+    glm::mat4 Projection = glm::perspective(glm::radians(50.0f), 4.0f / 3.0f, 0.5f, 3.0f);
 	// Camera matrix
 	glm::mat4 View       = glm::lookAt(
-								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
-								glm::vec3(0,0,0), // and looks at the origin
-								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+                                m_eye, // Camera is at (4,3,-3), in World Space
+                                m_target, // and looks at the origin
+								up  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 	// Model matrix : an identity matrix (model will be at the origin)
 	glm::mat4 Model      = glm::mat4(1.0f);
@@ -87,6 +147,7 @@ int main( void )
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
+    /*
 	static const GLfloat g_vertex_buffer_data[] = { 
 		-1.0f,-1.0f,-1.0f,
 		-1.0f,-1.0f, 1.0f,
@@ -165,17 +226,24 @@ int main( void )
 		0.820f,  0.883f,  0.371f,
 		0.982f,  0.099f,  0.879f
 	};
+    */
 
+
+    GLfloat *vVertices = NULL;
+    int vertexCount = setCylinderModel(1, r/h, PIECE_COUNT, VIEW_ANGLE, &vVertices);
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * ELEMENT_COUNT * sizeof(float), vVertices, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
+    /*
 	GLuint colorbuffer;
 	glGenBuffers(1, &colorbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-
+    */
+    
 	do{
 
 		// Clear the screen
@@ -196,10 +264,11 @@ int main( void )
 			3,                  // size
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
-			0,                  // stride
+			ELEMENT_COUNT * sizeof(float),                  // stride
 			(void*)0            // array buffer offset
 		);
 
+        /*
 		// 2nd attribute buffer : colors
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
@@ -211,12 +280,14 @@ int main( void )
 			0,                                // stride
 			(void*)0                          // array buffer offset
 		);
+        */
 
 		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
+		//glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
 
 		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+		// glDisableVertexAttribArray(1);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -228,7 +299,7 @@ int main( void )
 
 	// Cleanup VBO and shader
 	glDeleteBuffers(1, &vertexbuffer);
-	glDeleteBuffers(1, &colorbuffer);
+	// glDeleteBuffers(1, &colorbuffer);
 	glDeleteProgram(programID);
 	glDeleteVertexArrays(1, &VertexArrayID);
 

@@ -1,0 +1,23 @@
+dependencies: \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.cpp \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btConvexPenetrationDepthSolver.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btSimplexSolverInterface.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btVector3.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btScalar.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btMinMax.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btAlignedAllocator.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btConvexCast.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btTransform.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btMatrix3x3.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btQuaternion.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btQuadWord.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/LinearMath/btIDebugDraw.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/CollisionShapes/btCollisionMargin.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/CollisionShapes/btConvexShape.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/CollisionShapes/btCollisionShape.h \
+  /Users/jeyoon/project/github/ogl/external/bullet-2.81-rev2613/src/BulletCollision/BroadphaseCollision/btBroadphaseProxy.h
